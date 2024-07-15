@@ -1,0 +1,12 @@
+dependencias
+
+express js
+nodemon
+cors
+pg
+pg-format
+dotenv
+jsonwebtoken
+bcryptjs
+jest
+supertest
