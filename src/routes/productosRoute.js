@@ -18,7 +18,7 @@ routes.get('/home', productosController.controller_getHome)                     
 
 routes.get('/categorias', productosController.controller_getCategoria)                                      //          **
 
-routes.get('/search', productosController.controller_getSearch)                                             //
+routes.get('/search', productosController.controller_getSearch)                                             //          **
 
 
 module.exports = routes
