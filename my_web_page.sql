@@ -13,7 +13,7 @@ CREATE TABLE productos (
 	url_imagen VARCHAR(200) NOT NULL,
 	descripcion VARCHAR(200) NOT NULL,
 	precio INT NOT NULL CHECK(precio>0),
-	cantidad INT NOT NULL CHECK(cantidad>0),
+	cantidad INT NOT NULL CHECK(cantidad>0)
 );
 
 -- CREATE TABLE misPedidos (

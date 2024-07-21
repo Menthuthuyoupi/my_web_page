@@ -10,7 +10,7 @@ const controller_register = async (req, res) => {
     } catch (error) {
         if(error.code){
             const { code, message } = getDatabaseError(error.code)
-            return res.status(code).json(message)
+            return res.status(code).json({message: message})
         }
         return res.status(500).json({ message: "Internal server error" })
     }
