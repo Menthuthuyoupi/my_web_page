@@ -10,7 +10,7 @@ routes.get('/likes/:id', productosController.controller_getLikes)               
 routes.put('/likes/:id', validations.validarToken, productosController.controller_putLikes)                 //TOKEN     **    
 
 routes.delete('/productos/:id', validations.validarToken, productosController.controller_deleteProducto)    //TOKEN     **
-routes.put('/productos/:id', validations.validarToken, productosController.controller_PutProductoPrecio)    //TOKEN     **
+routes.put('/productos/:id', validations.validarToken, productosController.controller_PutProduct)           //TOKEN     **
 
 routes.get('/productosusuario', productosController.controller_getProductoByIdUsuario)                      //          **
 
@@ -20,5 +20,7 @@ routes.get('/categorias', productosController.controller_getCategoria)          
 
 routes.get('/search', productosController.controller_getSearch)                                             //          **
 
+routes.post('/miscompras/:id', validations.validarToken, productosController.controller_postMisCompras)
+routes.get('/miscompras/:id', productosController.controller_getMisCompras)
 
 module.exports = routes

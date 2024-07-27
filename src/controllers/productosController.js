@@ -60,7 +60,9 @@ const getHATEOAS = (productos, total, limit, page) => {
             categoria: p.categoria,
             precio: p.precio,
             cantidad: p.cantidad,
-            href: p.id  
+            descripcion: p.descripcion,
+            href: p.id,
+            id_usuario: p.id_usuario
         }
 
     })
@@ -161,7 +163,7 @@ const controller_getProductoByIdUsuario = async (req, res) => {
     }
 }
 
-const  controller_deleteProducto = async (req, res) => {
+const controller_deleteProducto = async (req, res) => {
     const { id } = req.params
     try {
         await productosModel.deleteProducto(id)
@@ -175,12 +177,41 @@ const  controller_deleteProducto = async (req, res) => {
     }
 }
 
-const  controller_PutProductoPrecio = async (req, res) => {
+const controller_PutProduct = async (req, res) => {
     const { id } = req.params
-    const { precio } = req.query
+    const { precio, cantidad, descripcion, url_imagen, nombre } = req.query
     try {
-        await productosModel.putProductoPrecio(id, precio)
+        await productosModel.putProduct(id, precio, cantidad, descripcion, url_imagen, nombre)
         return res.status(201).send({message: 'Producto modificado'})
+    } catch (error) {
+        if(error.code){
+            const { code, message } = getDatabaseError(error.code)
+            return res.status(code).json(message)
+        }
+        return res.status(500).json({ message: "Internal server error" })
+    }
+}
+
+const controller_postMisCompras = async (req, res) => {
+    const { id } = req.params
+    const { id_usuario, nombre, imagen, cantidad } = req.body
+    try {
+        await productosModel.postMisCompras(id, id_usuario, nombre, imagen, cantidad)
+        return res.status(201).send({message: 'Gracias por comprar aquí'})
+    } catch (error) {
+        if(error.code){
+            const { code, message } = getDatabaseError(error.code)
+            return res.status(code).json(message)
+        }
+        return res.status(500).json({ message: "Internal server error" })
+    }
+}
+
+const controller_getMisCompras = async (req, res) => {
+    const { id } = req.params
+    try {
+        const misCompras = await productosModel.getMisCompras(id)
+        return res.status(201).send(misCompras)
     } catch (error) {
         if(error.code){
             const { code, message } = getDatabaseError(error.code)
@@ -201,7 +232,9 @@ const productosController = {
     controller_getLikes,
     controller_getProductoByIdUsuario,
     controller_deleteProducto,
-    controller_PutProductoPrecio
+    controller_PutProduct,
+    controller_postMisCompras,
+    controller_getMisCompras
 }
 
 module.exports = { productosController }

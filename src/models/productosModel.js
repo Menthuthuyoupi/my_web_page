@@ -53,12 +53,16 @@ const getProductobyID = async (id) => {
 }
 
 const putLike = async (id, id_usuario) => {
-    const query = 'INSERT INTO likes (id, id_producto, id_usuario) VALUES ($1, $2, $3)'
-    const idLikes = id + '-' + id_usuario
-    const query2 = 'SELECT * FROM likes WHERE id = $1'
-    const { rowCount } = await database.query(query2, [idLikes])
-    if(rowCount === 0){
-        await database.query(query, [idLikes, id, id_usuario])
+    const PrevLikes = 'SELECT * FROM productos WHERE id = $1'
+    const { rows } = await database.query(PrevLikes, [id])
+    if(rows[0].id_usuario !== id_usuario){
+        const query = 'INSERT INTO likes (id, id_producto, id_usuario) VALUES ($1, $2, $3)'
+        const idLikes = id + '-' + id_usuario
+        const query2 = 'SELECT * FROM likes WHERE id = $1'
+        const { rowCount } = await database.query(query2, [idLikes])
+        if(rowCount === 0){
+            await database.query(query, [idLikes, id, id_usuario])
+        }
     }
     const likes = await getLikes(id)
     return likes
@@ -78,9 +82,32 @@ const deleteProducto = async (id) => {
     return { total}
 }
 
-const putProductoPrecio = async (id, precio) => {
-    const query = 'UPDATE productos SET precio = $1 WHERE id = $2'
-    await database.query(query, [precio, id])
+const putProduct = async (id, precio, cantidad, descripcion, url_imagen, nombre) => {
+    //cantidad es la cantidad comprada por el usuario
+    const evaluar = cantidad.split(' ')
+    const { cantidad: cantidadDB } = await getProductobyID(id) 
+    const query = 'UPDATE productos SET precio = $1, cantidad = $2, descripcion = $3, url_imagen = $4, nombre = $5 WHERE id = $6'
+    if(evaluar[1] === 'default'){   
+        const value = [precio, cantidadDB, descripcion, url_imagen, nombre, id]
+        await database.query(query, value)
+    }else{
+        const nuevaCantidad = +cantidadDB - +evaluar[0]
+        const value = [precio, nuevaCantidad, descripcion, url_imagen, nombre, id]
+        await database.query(query, value) 
+    }
+}
+
+const postMisCompras = async (id, id_usuario, nombre, imagen, cantidad) => {
+    const query = 'INSERT INTO misCompras (id_producto, id_usuario, nombre, url_imagen, cantidad, fecha) VALUES ($1, $2, $3, $4, $5, DEFAULT)'
+    const value = [id, id_usuario, nombre, imagen, cantidad]
+    await database.query(query, value)
+}
+
+const getMisCompras = async (id) => {
+    const query = 'SELECT * FROM misCompras WHERE id_usuario = $1'
+    const value = [id]
+    const { rows } = await database.query(query, value)
+    return rows
 }
 
 const productosModel = {
@@ -93,7 +120,9 @@ const productosModel = {
     getLikes,
     getProductoByIdUsuario,
     deleteProducto,
-    putProductoPrecio
+    putProduct,
+    postMisCompras,
+    getMisCompras
 }
 
 module.exports = { productosModel }

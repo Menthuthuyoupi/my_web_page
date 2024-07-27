@@ -2,12 +2,16 @@ CREATE TABLE usuarios (
 	id SERIAL PRIMARY KEY,
 	email VARCHAR(100) NOT NULL UNIQUE,
 	password VARCHAR(100) NOT NULL,
-	url_imagen VARCHAR(200)
+	url_imagen VARCHAR(200),
+	nombre VARCHAR(50) DEFAULT 'userName',
+	prefijo_telefonico VARCHAR(5) DEFAULT '56',
+	telefono INTEGER DEFAULT 11111111,
+	birthdate DATE DEFAULT '1900-01-01'
 );
 
 CREATE TABLE productos (
 	id SERIAL PRIMARY KEY,
-	id_usuario INT REFERENCES usuarios(id),
+	id_usuario INT REFERENCES usuarios(id) ON DELETE CASCADE,
 	categoria VARCHAR(30) REFERENCES categorias(categoria),
 	nombre VARCHAR(100) NOT NULL,
 	url_imagen VARCHAR(200) NOT NULL,
@@ -16,17 +20,20 @@ CREATE TABLE productos (
 	cantidad INT NOT NULL CHECK(cantidad>0)
 );
 
--- CREATE TABLE misPedidos (
--- 	id SERIAL PRIMARY KEY,
--- 	id_usuario INT REFERENCES usuarios(id),
--- 	id_producto INT REFERENCES productos(id),
--- 	es_un_pedido BOOLEAN DEFAULT false
--- );
+CREATE TABLE misCompras (
+	id SERIAL PRIMARY KEY,
+	id_usuario INT REFERENCES usuarios(id) ON DELETE CASCADE,
+	id_producto INT REFERENCES productos(id) ON DELETE CASCADE,
+	nombre VARCHAR(100) NOT NULL,
+	url_imagen VARCHAR(200) NOT NULL,
+	cantidad INTEGER NOT NULL,
+	fecha TIMESTAMP DEFAULT NOW()
+);
 
 CREATE TABLE likes (
 	id VARCHAR(20) UNIQUE NOT NULL,
-	id_usuario INT REFERENCES usuarios(id),
-	id_producto INT REFERENCES productos(id)
+	id_usuario INT REFERENCES usuarios(id) ON DELETE CASCADE,
+	id_producto INT REFERENCES productos(id) ON DELETE CASCADE
 );
 
 CREATE TABLE categorias (
@@ -37,11 +44,6 @@ CREATE TABLE categorias (
 INSERT INTO categorias (categoria) VALUES
 ('procesador'),('placa madre'),('tarjeta de video'),('ram'),('disco duro'), ('fuente de poder'), ('gabinete'),
 ('teclado'),('mouse'),('pantalla'),('audifono');
-
-INSERT INTO usuarios (email, password) VALUES
-('elefante@gmail.com','1234'),('cocodrilo@gmail.com','1234'),('hipopotamo@gmail.com','1234'),('leon@gmail.com','1234'),
-('macaco@gmail.com','1234'),('tigre@gmail.com','1234'),('jirafa@gmail.com','1234'),('calamar@gmail.com','1234'),
-('perro@gmail.com','1234'),('gato@gmail.com','1234'),('pulpo@gmail.com','1234'),('ballena@gmail.com','1234');
 
 INSERT INTO productos (id_usuario, categoria, nombre, url_imagen, descripcion, precio, cantidad) VALUES
 (1, 'placa madre', 'ASRock H470M-HVS', 'https://media.solotodo.com/media/products/1409842_picture_1624011307.jpg', 
@@ -136,5 +138,3 @@ INSERT INTO productos (id_usuario, categoria, nombre, url_imagen, descripcion, p
 'Tamaño máximo de placa madre Micro ATX Tamaño 352 x 345 x 206 mm.', 25000, 18),
 (1, 'gabinete', 'Cooler Master CMP 320 ARGB', 'https://media.solotodo.com/media/products/1821561_picture_1695889317.png', 
 'Tamaño máximo de placa madre Micro ATX Tamaño 445 x 425 x 204 mm.', 65000, 22);
-
-SELECT * FROM productos WHERE productos.nombre ILIKE '%intel%' OR productos.descripcion ILIKE '%intel%';
