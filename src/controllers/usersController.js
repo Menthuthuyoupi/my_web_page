@@ -54,7 +54,7 @@ const controller_photo = async (req, res) => {
     }
 }
 
-const controller_password = async (req, res) => {
+const controller_newPassword = async (req, res) => {
     const { id, newPassword } = req.body
     try {
         await usersModel.actualizandoPassword(id, newPassword)
@@ -101,7 +101,7 @@ const usersController = {
     controller_register,
     controller_login,
     controller_photo,
-    controller_password,
+    controller_newPassword,
     controller_yourInfo,
     controller_deleteYourAcc
 }

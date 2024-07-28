@@ -59,7 +59,7 @@ const deleteYourAcc = async(id) => {
     const query = "DELETE FROM usuarios WHERE id = $1 RETURNING *"
     const { rows } = await database.query(query , [id])
 
-    return { ... rows[0], logged: false, password:'', message: 'Tu Cuenta ha sido eliminada'}
+    return {message: 'Tu Cuenta ha sido eliminada'}
 }
 
 const usersModel = {
